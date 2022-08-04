@@ -1,4 +1,5 @@
 #[macro_use] extern crate rocket;
+use rocket::serde::{Deserialize, json::Json};
 
 #[get("/")]
 fn index() -> &'static str {
@@ -10,14 +11,26 @@ fn hello(name: String) -> String {
     format!("Hello, {}! You are the greatest programmer ever", name)
 }
 
-#[post("/hello", format = "json", data = "<name>")]
-fn hello_post(name: String) -> String {
-    format!("Hello, {}!", name)
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct User<'r> {
+    name: &'r str,
+    age: u8,
+}
+
+#[post("/user", format = "application/json", data = "<user>")]
+fn create_user(user: Json<User<'_>>) -> String {
+    format!("Hello, {}! You are the greatest programmer ever", user.name)
+}
+
+#[get("/user/<id>")]
+fn get_user(id: u32) -> String {
+    format!("User {}", id)
 }
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index, hello, hello_post])
-        .mount("/this", routes![index, hello, hello_post])
+        .mount("/", routes![index, hello])
+        .mount("/admin", routes![create_user, get_user])
 }
