@@ -1,0 +1,13 @@
+services:
+  rocket-backend:
+    networks:
+      - docker_default
+    build: .
+    ports:
+      - "8000:8000"
+
+networks:
+  docker_default:
+    driver: bridge
+    name: docker_default
+    external: true

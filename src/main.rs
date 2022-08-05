@@ -15,7 +15,7 @@ fn hello(name: String) -> String {
 #[serde(crate = "rocket::serde")]
 struct User<'r> {
     name: &'r str,
-    age: u8,
+    // age: u8,
 }
 
 #[post("/user", format = "application/json", data = "<user>")]
@@ -30,6 +30,7 @@ fn get_user(id: u32) -> String {
 
 #[launch]
 fn rocket() -> _ {
+    print!("this is working");
     rocket::build()
         .mount("/", routes![index, hello])
         .mount("/admin", routes![create_user, get_user])
